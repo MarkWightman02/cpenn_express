@@ -1,77 +1,61 @@
-var http = require('http');
-var fs = require('fs');
 
-var port = 1337;
-
-function serveStaticFile(res, path, contentType, responseCode) {
-	if(!responseCode){
-		responseCode = 200;
-	}
-
-  fs.readFile(__dirname + path, function(err, data){
-    if (err) {
-      res.writeHead(500, {'Content-Type': 'text/plain'});
-      res.end('500 -- Internal Server Error');
-	  console.log(err);
-    } else {
-      res.writeHead(responseCode, {'Content-Type': contentType});
-      res.end(data);
-    }
-  });
-}
-
-http.createServer(function(req, res){
-  var path = req.url.replace(/\/?(?:\?.*)?$/, '').toLowerCase();
-  
-  switch(path){
-	  
-	  case '':
-		serveStaticFile(res, '/public/index.html', 'text/html');
-		break;
-	  
-	  case '/contact':
-		serveStaticFile(res, '/public/contact.html', 'text/html');
-		break;
-	  
-	  case '/about':
-		serveStaticFile(res, '/public/about.html', 'text/html');
-		break;
-		
-	  case '/services':
-		serveStaticFile(res, '/public/services.html', 'text/html');
-		break;
-	  
-	  case '/404':
-		serveStaticFile(res, '/public/404.html', 'text/html');
-		break;
-	  
-	  case '/about.jpeg':
-		serveStaticFile(res, '/public/images/about.jpeg', 'image/jpeg');
-		break;
-	  
-	  case '/contact.jpg':
-		serveStaticFile(res, '/public/images/contact.jpg', 'image/jpeg');
-		break;
-	  
-	  case '/service.jpg':
-		serveStaticFile(res, '/public/images/service.jpg', 'image/jpeg');
-		break;
-	  
-	  case '/logo.png':
-		serveStaticFile(res, '/public/images/logo.png', 'image/png');
-		break;
-	  
-	  
-	  case '/style/style.css':
-	  serveStaticFile(res, '/public/style/style.css', 'text/css');
-	  break;
-	  
-	  default:
-		serveStaticFile(res, '/public/404.html', 'text/html', 404);
-		break;
-  }
-}).listen(1337);
+const express = require('express');
 
 
-console.log(`Server running at http://localhost:${port}`);
+const app = express();
 
+
+const port = 1337;
+
+const dir = __dirname;
+
+// Define routes to serve static files
+app.get('/', function(req, res) {
+  res.sendFile(dir + '/public/index.html');
+});
+
+app.get('/contact', function(req, res) {
+  res.sendFile(dir +  '/public/contact.html');
+});
+
+
+app.get('/about', function(req, res) {
+  res.sendFile(dir + '/public/about.html');
+});
+
+app.get('/services', function(req, res) {
+  res.sendFile(dir + '/public/services.html');
+});
+
+app.get('/404', function(req, res) {
+  res.sendFile(dir + '/public/404.html');
+});
+
+app.get('/images/about.jpeg', function(req, res) {
+  res.sendFile(dir + '/public/images/about.jpeg');
+});
+
+app.get('/images/contact.jpg', function(req, res) {
+  res.sendFile(dir + '/public/images/contact.jpg');
+});
+
+app.get('/images/service.jpg', function(req, res) {
+  res.sendFile(dir + '/public/images/service.jpg');
+});
+
+app.get('/images/logo.png', function(req, res) {
+  res.sendFile(dir + '/public/images/logo.png');
+});
+
+app.get('/style/style.css', function(req, res) {
+  res.sendFile(dir + '/public/style/style.css');
+});
+
+app.get("/*", function(req, res) {
+  res.sendFile(dir + '/public/404.html');
+});
+
+// Start the server
+app.listen(port, function() {
+  console.log(`Server running at http://localhost:${port}`);
+});
